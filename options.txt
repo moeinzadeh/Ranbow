@@ -1,0 +1,28 @@
+hap:	Haplotyping
+	-mode index
+		Step 1: make index for fasta, VCF, and bam files
+	-mode hap
+		Step 2: haplotyping 
+		Eg:	python ranbow.py hap -mode hap -par params.txt	-processorIndex ?
+	-mode collect
+		Step 3: collect haplotypes, generate bam files
+	-mode modVCF
+		Step 4:	Modify the vcf file according to assembled haplotypes
+
+eval:	Evaluate the haplotype assembly 
+	-mode index
+		Step 1: Generate the index file for Roche 454 fastq, vcf, and fastq files
+	-mode run
+		Step 2: run evaluation 
+	-mode collect
+		Step 3: collect result of evaluation 
+
+phylo:	Phylogenetic tree reconstruction from the assembled haplotypes
+	-mode index
+		Step 1: make index for fasta, VCF, and sam files
+	-mode run
+		Step 2: haplotyping 
+	-mode collect
+		Step 3: collect haplotypes, generate bam files
+	-mode tree
+		Step 4:	Modify the vcf file according to assembled haplotypes
