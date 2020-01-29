@@ -296,7 +296,7 @@ the parameters are:
 
 
 
-| Parameter | Compulsory on  | modes | Command line and/or parameter file | Description |
+| Parameter | Compulsory on  modes | Command line and/or parameter file | Description |
 | --- | ---  | --- | --- | --- |
 | `-mode` | Index, run, and collect | C | This parameter indicates the mode function  |
 | `-par` | Index, run, and collect | C | Most of the parameter can be adjusted in this file and be passed by this parameter |
