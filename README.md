@@ -67,7 +67,7 @@ To run Ranbow, the parameters in the following table need to be adjusted. Some o
 | `-vcfFile` | Index, hap, and modVCF | CF | Vcf file |
 |`-selectedScf`| hap | CF | The haplotyping can be run on a group of scaffolds. This file indicates list of scaffolds and/or regions that are going to | be haplotyped. |
 | `-outputFolderBase` | Index, hap, collect, modVCF | CF | The result of haplotyping will be collected in the following folder.| 
-| `-processorIndex` | hap | C | It is possible to run Ranbow on different cores in one machine and also in different machines. All scaffolds are distributed to different sets according to their sizes. This assignment is done to minimize the maximum running time of all individual processors. Each set is assigned to one processor. -processorIndex is an index referring to one processor and should be in the following range: [0, -noProcessor) |  
+| `-processorIndex` | hap | C | It is possible to run Ranbow on different cores in one machine and also in different machines. All scaffolds are distributed to different sets according to their sizes. This assignment is done to minimize the maximum running time of all individual processors. Each set is assigned to one processor. `-processorIndex` is an index referring to one processor and should be in the following range: [0, `-noProcessor`) |  
 
 *C: command line, F: parameter file
 
@@ -83,7 +83,7 @@ Here is the content of parameter file used in this toy example:
 ```
 
 
-For simplicity, data files are stored in one folder (named RANBOW/toy) and the all parameters are adjusted in hap.params file. The parameter file is passed to through the “-par” argument.
+For simplicity, data files are stored in one folder (named RANBOW/toy) and the all parameters are adjusted in hap.params file. The parameter file is passed to through the `-par` argument.
 ```
 python2_7_13  ranbow.py hap -par RANBOW/toy/hap.params
 ```
@@ -99,7 +99,7 @@ total 30M
 -rw-r----- 1 moeinzad moeinzad  405 Mar 30 11:18 toy_data.sh
 ```
 
-### Indexing inputs - bam, fasta, and vcf files (mode: index)
+### Indexing inputs: bam, fasta, and vcf files (mode: index)
 
 
 
@@ -128,9 +128,9 @@ drwxr-x--- 2 moeinzad moeinzad   10 Mar 31 10:58 result
 
 ### Running haplotyper (mode: hap)
 
-The -noProcessor should be adjusted according to the number of available processors. For example if the code is running on a cluster with 200 cores, -noProcessor can be set to 200. Then, 200 independent jobs will be executed with different set of scaffolds. These 200 jobs are independent and can be run on different machines as well. For the sake of simplicity in the toy example, we run the code utilizing 3 cores. 
+The `-noProcessor` should be adjusted according to the number of available processors. For example if the code is running on a cluster with 200 cores, `-noProcessor` can be set to 200. Then, 200 independent jobs will be executed with different set of scaffolds. These 200 jobs are independent and can be run on different machines as well. For the sake of simplicity in the toy example, we run the code utilizing 3 cores. 
 
-The  -processorIndex is a compulsory parameter in command line if the number of processors is more than 1 (-noProcessor > 1). Otherwise -noProcessor is set to 1 and -processorIndex is set to 0  by default , meaning that the output is generated with one processor and the result is going to be generated in a folder named 0. Here the standard output for the first processor (-processorIndex = 0 and -noProcessor = 3) is shown as follows. 
+The  `-processorIndex` is a compulsory parameter in command line if the number of processors is more than 1 (`-noProcessor` > 1). Otherwise `-noProcessor` is set to 1 and `-processorIndex` is set to 0  by default , meaning that the output is generated with one processor and the result is going to be generated in a folder named 0. Here the standard output for the first processor (`-processorIndex` = 0 and `-noProcessor` = 3) is shown as follows. 
 
 ```
 py1thon2_7_13 ranbow.py hap -mode hap -par hap.params -processorIndex 0
@@ -162,7 +162,7 @@ scaffold29117|size1608  readBAM 0:00:00.878690  Ranbow_single   0:00:00.033398  
 ```
 
 
-The running time for each part of haplotyping is reported in the standard output. The haplotyping result will appear in the subfolder of -outputFolderBase named as -processorIndex. For example, since we generated haplotypes for -processorIndex 0 the only generated folder is called 0
+The running time for each part of haplotyping is reported in the standard output. The haplotyping result will appear in the subfolder of `-outputFolderBase` named as `-processorIndex`. For example, since we generated haplotypes for `-processorIndex 0` the only generated folder is called 0
 
 ```
 RANBOW/toy/result > ls
@@ -195,7 +195,7 @@ done
 
 The standard outputs for each processor is collected in “0.log”, “1.log”, and “2.log” files.
 
-It is also possible to run Ranbow partly in one machine and partly in the other. Following our toy example, set 0 (-processorIndex = 0) and set 1 are executed in machine A and set 2 is executed in machine B.
+It is also possible to run Ranbow partly in one machine and partly in the other. Following our toy example, set 0 (`-processorIndex = 0`) and set 1 are executed in machine A and set 2 is executed in machine B.
 
 Machine A:
 ```
@@ -226,7 +226,7 @@ drwxr-x--- 2 moeinzad moeinzad 4.0K Mar 31 11:03 2
 
 
 ### Collecting generated data from different processors (mode: collect)
-When all jobs get finished, “-mode collect ” can be executed to collect the haplotypes from different machines:
+When all jobs get finished, `-mode collect` can be executed to collect the haplotypes from different machines:
 
 ```
 python2_7_13 ranbow.py hap -mode collect -par hap.params
@@ -254,7 +254,7 @@ total 1.2M
 
 For this toy example the generated single.hap.bam files are ready to be loaded for IGV viewer for further analysis.
 
-## Revising sequence variants - vcf file (mode: modVCF)
+## Revising sequence variants of vcf file (mode: modVCF)
 
 The following command modifies and corrects the variants with the aid of assembled haplotypes.
 
@@ -277,7 +277,7 @@ The detailed information of the modification can be found in:
 
 ## Ranbow eval
 
-To evaluate the haplotyping accuracy, we recruit the Roche 454 trimmed reads mapped to the assembly. This file or other gold standard mapped read files has to be passed with -bamFileEval parameter. The Ranbow eval has also this option of being executed in different machine in parallel. For obtaining the evaluation result the following steps needs to be done.
+To evaluate the haplotyping accuracy, we recruit the Roche 454 trimmed reads mapped to the assembly. This file or other gold standard mapped read files has to be passed with `-bamFileEval` parameter. The Ranbow eval has also this option of being executed in different machine in parallel. For obtaining the evaluation result the following steps needs to be done.
 
 ```
 python2_7_13 ranbow.py eval -par hap.params -mode index
@@ -322,7 +322,7 @@ drwxr-x--- 2 moeinzad moeinzad    66 Apr 16 18:33 2
 drwxr-x--- 2 moeinzad moeinzad    66 Apr 16 18:33 3
 ```
 
-The result.sing file is the evaluation of haplotypes which are assembled from reads. The two columns indicate the “Match”, “Mismatch” of the overlaps between phased haplotypes and 454 reads. In order to investigate more the overlaps, one can take a look at the file named /*/ranbow.single.eval. The following lines are selected from /0/ranbow.single.eval file as an example. These lines show the similarity and dissimilarity of the overlaps between 454 and assembled haplotypes in one block. The number in parenthesis show the similarity and dissimilarity in the overlap. The arrow indicates which haplotype is assumed to be sampled from the same chromosomes that the 454 read is also sampled. For instance (8, 1) indicate 8 allele matches and 1 allele mismatches between 454 reads and the second assembled haplotype.
+The result.sing file is the evaluation of haplotypes which are assembled from reads. The two columns indicate the “Match”, “Mismatch” of the overlaps between phased haplotypes and 454 reads. In order to investigate more the overlaps, one can take a look at the file named `/*/ranbow.single.eval`. The following lines are selected from `/0/ranbow.single.eval` file as an example. These lines show the similarity and dissimilarity of the overlaps between 454 and assembled haplotypes in one block. The number in parenthesis show the similarity and dissimilarity in the overlap. The arrow indicates which haplotype is assumed to be sampled from the same chromosomes that the 454 read is also sampled. For instance (8, 1) indicate 8 allele matches and 1 allele mismatches between 454 reads and the second assembled haplotype.
 
 ```
 454
@@ -366,7 +366,7 @@ hap/RANBOW > mypy ranbow.py phylo -par params.txt -mode collect
 26 ((())(()))
 ```
 
-Moreover Ranbow phylo -mode tree calculates the mutation rates in the branch trees reports the relative branch lengths. (only works for hexaploid)
+Moreover `Ranbow phylo -mode` tree calculates the mutation rates in the branch trees reports the relative branch lengths. (only works for hexaploid)
 
 ```
 hap/RANBOW > mypy ranbow.py phylo -par params.txt -mode tree
