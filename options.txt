@@ -1,3 +1,4 @@
+Version: 1.0
 hap:	Haplotyping
 	-mode index
 		Step 1: make index for fasta, VCF, and bam files

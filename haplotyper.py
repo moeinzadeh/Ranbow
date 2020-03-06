@@ -188,7 +188,6 @@ class haplotyper:
             a = line.split()
 
     def __init__(self, argv, main_act):
-
         self.okey_params = False
         mp_params = {}
 
@@ -218,7 +217,6 @@ class haplotyper:
                 self.act = mp_params['-mode']
 
         read_parameters()
-
         if self.act == 'hap' and main_act == 'hap':
             self.is_eval = False
             mp_params['-MaxTypeLength'] = int(mp_params.get('-MaxTypeLength', 2)) + 1
@@ -258,6 +256,7 @@ class haplotyper:
                 self.algType = mp_params['-method']
                 self.ploidy = int(mp_params['-ploidy'])
                 self.max_type_len = int(mp_params['-MaxTypeLength'])
+
 
         if self.act == 'index' and main_act == 'hap':
             self. ref = mp_params['-refFile']
@@ -493,7 +492,6 @@ class haplotyper:
             # if not os.path. exists(self.hapPairInx):
             #     self. make_index_hap_file(self.hapPair)
 
-
     def make_mp_scfLen(self):
         mp = {}
         for i in open(self.ref_fai):
@@ -514,7 +512,10 @@ class haplotyper:
                 l_scf += [(a[0], 1, int(mp[a[0]]), a[0])]
             su += l_scf[-1][2] - l_scf[-1][1] + 1
 
-        avr = su/self. no_processor
+        #print self.l_selected_scfs
+        #print su
+        #print self.no_processor
+        avr = su/self.no_processor
 
         l_l_selected_scf = []
         l_l_sum = []
@@ -631,7 +632,7 @@ class haplotyper:
         inxRead = -1
         indel_tag = False
         for i in range(1,len(arr_cigar), 2):
-            if arr_cigar[i + 1] == 'M':
+            if arr_cigar[i + 1] in ['M','X','=']:
                 new_cigar += arr_cigar[i] + 'M'
                 no_match = int(arr_cigar[i])
 
@@ -731,7 +732,11 @@ class haplotyper:
 
         arr_pos = vcf_info [0]
         arr_var = vcf_info [1]
+
         mp_r_M, mp_M_r = self.makeMapRefandRead(r)
+
+        #print mp_r_M, mp_M_r
+
         segList = {}
         segQual = {}
         seqLen = self.cigar2length(r.cigar)
@@ -1495,7 +1500,7 @@ class haplotyper:
     #
 
     def haplotyping_change_for_ranbow_new(self, l):
-
+        #print  '___________________', 'in go ', '____________', self.max_type_len
         fastafile = pysam.FastaFile(self.ref)
         samfile = pysam.AlignmentFile(self.bam, 'rb')
         mp_vcf = self.load_inx_file(self.vcf_inx)
@@ -1541,7 +1546,7 @@ class haplotyper:
 
             if scf in samfile.references:
                 for read in samfile.fetch(scf, scf_start - 1, scf_end + 1):
-                    if (read.template_length >20000 or read.template_length < -20000):
+                    if (read.template_length > 35000 or read.template_length < -35000):
                         #print read.template_length
                         continue
 
@@ -1866,14 +1871,15 @@ class haplotyper:
             continue
 
     def go(self):
-        cpu_id = self.processorNumber
+        #print '___________________', 'in go ', '____________', self.is_eval,self.is_addSMRT
 
+        cpu_id = self.processorNumber
         l_l_selected_scf = self.distribute_selected_scaffolds()
         if self.is_eval:
             self.evaluate_haplotypes(l_l_selected_scf[cpu_id])
         elif self.is_addSMRT:
             self.addSMRT(l_l_selected_scf[cpu_id])
         else:
+            #print '___________________', 'in go ', '____________', self.is_eval, self.is_addSMRT
+            #print self.max_type_len
             self.haplotyping_change_for_ranbow_new(l_l_selected_scf[cpu_id])
-
-

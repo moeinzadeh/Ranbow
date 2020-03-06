@@ -6,6 +6,7 @@ def main(argv):
 
 
     options = ['hap', 'eval', 'sim', 'hscaf', 'close_gap', 'util', 'phylo', 'circlarHeatMap', 'repeat_vs_tree','addSMRT']
+    print "Vesion 1.0"
     if len(argv) == 0 or argv[0] not in options:
         for i in open("options.txt"):
             print i.rstrip()
@@ -18,10 +19,16 @@ def main(argv):
     if main_act == 'hap':
         import haplotyper
         hap = haplotyper.haplotyper(argv, main_act)
+
+
+
+
+
         hap.is_eval = False
         hap.is_addSMRT = False
         if hap.act in ['hap', 'index']:
             if hap.okey_params:
+                #print '___________________', hap.act, '____________', hap.okey_params
                 hap.go()
         elif hap.act == 'collect':
             print 'number of folders:', hap.no_processor
@@ -31,16 +38,17 @@ def main(argv):
             print subprocess.check_output(
                 ['bash', os.path.dirname(sys.argv[0])+'/hap_collect.sh', hap.outputFolder, hap.prefix, str(hap.no_processor), hap.ref_fai])
 
-            import IGV
-            igv = IGV.IGV(argv,hap.outputFolder, hap.prefix)
+            #import IGV
+            #igv = IGV.IGV(argv,hap.outputFolder, hap.prefix)
             #igv.makeBam_ATCG()
-            igv.makeSam()
+            #igv.makeSam()
 
 
         elif hap.act == 'modVCF':
             import vcf_correction
             v = vcf_correction.vcf_correction(hap)
             v.run()
+
 
     if main_act == 'eval':
         import haplotyper

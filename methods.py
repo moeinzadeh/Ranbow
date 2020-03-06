@@ -4,11 +4,11 @@ from select import select
 from threading import _enumerate
 
 import numpy as np
-from Cython.Shadow import typeof
-from jcvi.projects.napus import ploidy
-from jsonschema.validators import extend
-from numpy.f2py.auxfuncs import throw_error
-from scipy.signal.lti_conversion import cont2discrete
+#from Cython.Shadow import typeof
+#from jcvi.projects.napus import ploidy
+#from jsonschema.validators import extend
+#from numpy.f2py.auxfuncs import throw_error
+#from scipy.signal.lti_conversion import cont2discrete
 
 import haplotyper
 import networkx as nx
@@ -1371,11 +1371,13 @@ class methods:
                         if H1.flag != -1:
                             H += H1
                         else:
-                            print 'A'
+                            pass
+                            #print 'A'
                         if H2.flag != -1:
                             H += H2
                         else:
-                            print 'B'
+                            pass
+                            #print 'B'
 
                         merged_triangle += 1
                         if len(H.connect_to) > 1:
@@ -3100,7 +3102,6 @@ class methods:
             return l1, l2
 
     def run_method_(self):
-
         if self.algName in ['kruskal', 'coloring']:
             if self.algorithm_mode == 'single':
                 return self.KruscalLike_or_coloring_algorithm_single()
