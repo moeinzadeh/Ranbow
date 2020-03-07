@@ -1500,6 +1500,9 @@ class haplotyper:
     #
 
     def haplotyping_change_for_ranbow_new(self, l):
+
+        max_insert_length = 35000
+        print "Maximum insert length is ", max_insert_length
         #print  '___________________', 'in go ', '____________', self.max_type_len
         fastafile = pysam.FastaFile(self.ref)
         samfile = pysam.AlignmentFile(self.bam, 'rb')
@@ -1546,7 +1549,7 @@ class haplotyper:
 
             if scf in samfile.references:
                 for read in samfile.fetch(scf, scf_start - 1, scf_end + 1):
-                    if (read.template_length > 35000 or read.template_length < -35000):
+                    if (read.template_length > max_insert_length or read.template_length < -1*max_insert_length):
                         #print read.template_length
                         continue
 
