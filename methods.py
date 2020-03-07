@@ -11,7 +11,7 @@ import numpy as np
 #from scipy.signal.lti_conversion import cont2discrete
 
 import haplotyper
-import networkx as nx
+#import networkx as nx
 import sys
 import itertools
 import operator

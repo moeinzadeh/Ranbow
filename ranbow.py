@@ -5,8 +5,7 @@ import sys
 def main(argv):
 
 
-    options = ['hap', 'eval', 'sim', 'hscaf', 'close_gap', 'util', 'phylo', 'circlarHeatMap', 'repeat_vs_tree','addSMRT']
-    print "Vesion 1.0"
+    options = ['hap', 'eval', 'sim', 'hscaf', 'close_gap', 'util', 'phylo', 'circlarHeatMap', 'repeat_vs_tree','addSMRT','version']
     if len(argv) == 0 or argv[0] not in options:
         for i in open("options.txt"):
             print i.rstrip()
@@ -15,6 +14,9 @@ def main(argv):
 
     else:
         main_act = argv[0]
+
+    if main_act == 'version':
+        print 'Ranbow version 2.0'
 
     if main_act == 'hap':
         import haplotyper
