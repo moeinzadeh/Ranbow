@@ -1,3 +1,8 @@
+#!/usr/bin/env python2.7
+
+__version__ = '2.0'
+__author__ = 'M-Hossein Moeinzadeh'
+
 import argparse
 import sys
 
