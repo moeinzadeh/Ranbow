@@ -610,8 +610,20 @@ class haplotyper:
             arrInx2pos.append(allele_pos)
             arrInxVariation.append(l_allele[:ploidy_no])
 
-            tmp1 = a[7]. split(';')
-            l_cigar = tmp1[6][6:]. split(',')
+            infoTag = a[7]. split(';')
+
+            mp_info_tags = {}
+            for tag in infoTag:
+                t,v = tag.split('=')
+                mp_info_tags[t] = v
+                
+
+            l_cigar = mp_info_tags['CIGAR'].split(',')
+
+
+            # tmp1 = a[7]. split(';')
+            # l_cigar = tmp1[6][6:]. split(',')
+
             arrVarPattern.append(l_cigar[:ploidy_no-1])
 
             line = fi.readline()
