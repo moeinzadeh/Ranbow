@@ -1,3 +1,8 @@
+# Authors: 
+# 'M-Hossein Moeinzadeh'
+# Thanks to Sven (https://github.com/schrins) for developing the cigar string function
+
+
 
 import pysam
 import datetime
@@ -60,11 +65,11 @@ class haplotyper:
             if not os.path.exists(basefolder):
                 os.makedirs(basefolder)
 
-            outputFolder = basefolder + '/' + folder
+            outputFolder = os.path.join(basefolder ,folder)
             if not os.path.exists(outputFolder):
                 os.makedirs(outputFolder)
 
-            outputFilePath = outputFolder + '/' + prefix
+            outputFilePath = os.path.join(outputFolder , prefix)
 
             fileEval = outputFilePath + '.single.eval'
             self.fo_eval_singel = open(fileEval, 'w')
@@ -129,6 +134,7 @@ class haplotyper:
     def check_all_params(self, mp):
         l = ['-ploidy',
              '-MaxTypeLength',
+             '-WinLen',
              '-method',
              '-noProcessor',
              '-bamFile',
@@ -220,6 +226,7 @@ class haplotyper:
         if self.act == 'hap' and main_act == 'hap':
             self.is_eval = False
             mp_params['-MaxTypeLength'] = int(mp_params.get('-MaxTypeLength', 2)) + 1
+            mp_params['-WinLen'] = int(mp_params.get('-WinLen', 8))
             mp_params['-method'] = mp_params.get('-method', 'kruskal')
             mp_params['-outputPrefixName'] = mp_params.get('-outputPrefixName', 'ranbow')
             mp_params['-noProcessor'] = int(mp_params.get('-noProcessor', '1'))
@@ -256,6 +263,7 @@ class haplotyper:
                 self.algType = mp_params['-method']
                 self.ploidy = int(mp_params['-ploidy'])
                 self.max_type_len = int(mp_params['-MaxTypeLength'])
+                self.WinLen = int(mp_params['-WinLen'])
 
 
         if self.act == 'index' and main_act == 'hap':
@@ -613,12 +621,46 @@ class haplotyper:
             infoTag = a[7]. split(';')
 
             mp_info_tags = {}
-            for tag in infoTag:
-                t,v = tag.split('=')
+            if "=" in infoTag:
+                for tag in infoTag:
+                    t,v = tag.split('=')
                 mp_info_tags[t] = v
                 
+            if 'CIGAR' in mp_info_tags:
+                l_cigar = mp_info_tags['CIGAR'].split(',')
+            else:
+                # compute cigar strings 
+                # Author of this part is https://github.com/schrins
+                ref = a[3]
+                alts = a[4].split(',')
+                l_cigar = []
+                for alt in alts:
+                    if ref == '*':
+                        l_cigar.append('{}I'.format(len(alt)))
+                    elif alt == '*':
+                        l_cigar.append('{}D'.format(len(ref)))
+                    elif len(alt) > len(ref) and alt[:len(ref)] == ref:
+                        l_cigar.append('{}M{}I'.format(len(ref), len(alt) - len(ref)))
+                    elif len(ref) > len(alt) and ref[:len(alt)] == alt:
+                        l_cigar.append('{}M{}D'.format(len(alt), len(ref) - len(alt)))
+                    else:
+                        for i in range(min(len(alt), len(ref))):
+                            if alt[i] != ref[i]:
+                                m = i
+                                break
+                        else:
+                            m = min(len(alt), len(ref))
+                        if m == 0:
+                            ms = ''
+                        else:
+                            ms = '{}M'.format(m)
+                        if len(ref) == len(alt):
+                            l_cigar.append('{}{}X'.format(ms, len(ref) - m))
+                        elif len(ref) > len(alt):
+                            l_cigar.append('{}{}X{}D'.format(ms, len(alt) - m, len(ref) - len(alt)))
+                        else:
+                            l_cigar.append('{}{}X{}I'.format(ms, len(ref) - m, len(alt) - len(ref)))
 
-            l_cigar = mp_info_tags['CIGAR'].split(',')
 
 
             # tmp1 = a[7]. split(';')
@@ -1623,6 +1665,7 @@ class haplotyper:
             m.uniq_frag_mode = 'frag'
             m.ploidy = self.ploidy
             m.max_type_len = self.max_type_len
+            m.WinLen = self.WinLen
             #m.single_frag = l_frag_single_uniq
             m.single_frag = l_seg_pair_merged
 

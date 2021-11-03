@@ -777,6 +777,7 @@ class methods:
         self.bo_connect_adjacent = False
         self.ploidy = -1
         self.max_type_len = -1
+        self.WinLen = -1
         self.single_frags = []
         self.pair_frags = []
         self.scf_hap_len = -1
@@ -841,9 +842,9 @@ class methods:
 
 
 
-    def obtain_types(self, l_frag, typeLenMin, typeLenMax, ploidy):  # phase_by_sorted_type
-
-        win_type_limit_size = 8
+    def obtain_types(self, l_frag, typeLenMin, typeLenMax, ploidy,win_type_limit_size):  # phase_by_sorted_type
+        
+        # win_type_limit_size = 8 submitted 
 
         mp = []
         for i in range(typeLenMin, typeLenMax):
@@ -3001,6 +3002,7 @@ class methods:
         ploidy = self.ploidy
         typeLenMin = 2
         typeLenMax = self.max_type_len
+        WinLen = self.WinLen
         l_frag_single = self.single_frag
         l_frag_pair = self.pair_frag
 
@@ -3012,7 +3014,7 @@ class methods:
         if len(l_frag_single) == 0:
             return [], []
 
-        l_all_types = self.obtain_types(l_frag_single, typeLenMin, typeLenMax, ploidy)
+        l_all_types = self.obtain_types(l_frag_single, typeLenMin, typeLenMax, ploidy,WinLen)
         #l_all_types = self.obtain_types_nolimit(l_frag_single, typeLenMin, typeLenMax, ploidy)
 
         if len(l_all_types) == 0:
@@ -3041,6 +3043,7 @@ class methods:
         ploidy = self.ploidy
         typeLenMin = 2
         typeLenMax = self.max_type_len
+        WinLen = self.WinLen
         l_frag_single = self.single_frag
         l_frag_single_used = np.zeros(len(l_frag_single),dtype=bool)
         scf_hap_len = self.scf_hap_len
@@ -3051,7 +3054,7 @@ class methods:
             self.l_blocks_sorted_extenstion = []
             return
 
-        l_all_types = self.obtain_types(l_frag_single, typeLenMin, typeLenMax, ploidy)
+        l_all_types = self.obtain_types(l_frag_single, typeLenMin, typeLenMax, ploidy, WinLen)
 
         if len(l_all_types) == 0:
             self.l_haps_single = []

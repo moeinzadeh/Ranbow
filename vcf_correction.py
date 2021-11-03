@@ -1,13 +1,16 @@
+import os
+
 class vcf_correction:
 	def __init__(self,hap):
-		self.hapFile = hap.outputFolder +hap.prefix + '.single.hap'
-		self.modVCFlog = hap.outputFolder + hap.prefix + '.modVCF.log'
+		self.hapFile = os.path.join(hap.outputFolder ,hap.prefix + '.single.hap')
+		self.modVCFlog = os.path.join(hap.outputFolder , hap.prefix + '.modVCF.log')
 		self.vcf = hap.vcf
 		self.ploidy = hap.ploidy
 
 		return
 	def run (self):
 		def trim_tails():
+			region_ploidy = len(l)
 			import sys
 			mx_l = -1
 			mn_r = sys.maxint
@@ -20,26 +23,26 @@ class vcf_correction:
 
 
 			cnt_block_len = 0
-			l_haps = [''] * ploidy
+			l_haps = [''] * region_ploidy
 			for j in range(mx_l, mn_r):
 				l_snp = []
-				for ii in range(ploidy):
+				for ii in range(region_ploidy):
 					pos = hap_b[ii][1]
 					hap = hap_b[ii][2]
 					l_snp.append(hap[j - pos])
 				
 				
 				if '-' in l_snp:
-					for k in range(ploidy):
+					for k in range(region_ploidy):
 						l_haps[k] += '-'
 				else:
-					for k in range(ploidy):
+					for k in range(region_ploidy):
 						l_haps[k] += l_snp[k]
 						
 			h =  []	
 			hname  = []		
 			if len(l_haps[0]) != 0 :
-				for i in range(ploidy):
+				for i in range(region_ploidy):
 					h += [l_haps[i]]
 					hname += [hap_b[i][0]]
 				return True, h,hname,mx_l
@@ -47,10 +50,11 @@ class vcf_correction:
 
 
 		def snp_modification():
-			
+			region_ploidy = len(haps)
+			print(haps)
 			for i in range(len(haps[0])):
 				mp_snp = {}
-				for j in range(ploidy):
+				for j in range(region_ploidy):
 					al = haps[j][i]
 					if al in mp_snp:
 						mp_snp[al] += 1
@@ -114,6 +118,7 @@ class vcf_correction:
 			hapFile = self.hapFile
 			mp = {}
 			for line in open(hapFile):
+				print line.rstrip()
 				if line.startswith(">>>"):
 					a = line.split()
 					scfName 	= 	a[1]
@@ -123,10 +128,13 @@ class vcf_correction:
 					cnt = 0
 					continue
 				cnt +=1
+				region_ploidy = int(line.split()[0])
 				l+=[line.rstrip()]
-				if cnt < ploidy:
+
+				if len(l) < region_ploidy:
 					continue
 				bo_empty, haps, hapsName, start = trim_tails()
+				print haps
 				snp_modification()
 				l = []
 				cnt = 0

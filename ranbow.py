@@ -41,9 +41,8 @@ def main(argv):
             print 'number of folders:', hap.no_processor
             import subprocess
             import os
-
             print subprocess.check_output(
-                ['bash', os.path.dirname(sys.argv[0])+'/hap_collect.sh', hap.outputFolder, hap.prefix, str(hap.no_processor), hap.ref_fai])
+                ['bash', os.path.join(os.getcwd(),'hap_collect.sh'), hap.outputFolder, hap.prefix, str(hap.no_processor), hap.ref_fai])
 
             #import IGV
             #igv = IGV.IGV(argv,hap.outputFolder, hap.prefix)
@@ -71,7 +70,7 @@ def main(argv):
             print hap.evalOutput
             import subprocess
             import os
-            print subprocess.check_output(['bash', os.path.dirname(sys.argv[0])+'/eval_collect.sh', hap.evalOutput])
+            print subprocess.check_output(['bash', os.path.join(os.getcwd(),'eval_collect.sh'), hap.evalOutput])
 
     if main_act == 'addSMRT':
         import haplotyper
@@ -86,7 +85,7 @@ def main(argv):
             print 'number of folders:', hap.no_processor
             print hap.evalOutput
             import subprocess
-            print subprocess.check_output(['bash', './eval_collect.sh', hap.evalOutput])
+            print subprocess.check_output(['bash', os.path.join(os.getcwd(),'eval_collect.sh'), hap.evalOutput])
 
 
 
