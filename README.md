@@ -224,10 +224,10 @@ drwxr-x--- 2 moeinzad moeinzad 4.0K Mar 31 11:03 1
 drwxr-x--- 2 moeinzad moeinzad 4.0K Mar 31 11:03 2
 ```
 
-#### Suggested command for different technologies
-##### Illumina
+### Suggested command for different technologies
+### (Illumina)
 The suggested parameters in the previous section and the default paramters are adjusted for Illumina
-##### Long read technologies like Pacbio CCS, Pacbio CLR, or Nanopore
+### (Pacbio, Nanopore) Long read technologies like Pacbio CCS, Pacbio CLR, or Nanopore
 We suggest to use the same command suggested in previous section plus 5 for -WinLen to speed up the process 
 
 
