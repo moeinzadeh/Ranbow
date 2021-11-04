@@ -37,10 +37,10 @@ It worth to mention that Ranbow has the feature of being applied on the whole or
 Ranbow hap has three modes of sub-function, for simplicity we refer to them as different modes, namely index, hap, and collect. The mode of choice is declared by -mode parameter in command line.
 
 ```
-python2_7_13  ranbow.py hap -mode index
-python2_7_13  ranbow.py hap -mode hap
-python2_7_13  ranbow.py hap -mode collect
-python2_7_13  ranbow.py hap -mode modVCF
+python2.7  ranbow.py hap -mode index
+python2.7  ranbow.py hap -mode hap
+python2.7  ranbow.py hap -mode collect
+python2.7  ranbow.py hap -mode modVCF
 ```
 The “index” mode generates the index files in order to have random access to the chromosomes and scaffolds in case of for parallelization. In “hap” mode, Ranbow construct haplotypes from mapped reads.  The “collect” mode collects the haplotypes assembled with different processors and generates the final fasta files, bam files ( aligned haplotypes) and also hap formated file . The bam files are already sorted and indexed and are ready to be loaded in IGV browser for downstream analysis. The hap formatted files include haplotypes information such as name, start position, haplotype sequence, number of error correction, haplotype quality, and supporting fragments. These fields are explained in more details as follows.
 
@@ -68,6 +68,7 @@ To run Ranbow, the parameters in the following table need to be adjusted. Some o
 |`-selectedScf`| hap | CF | The haplotyping can be run on a group of scaffolds. This file indicates list of scaffolds and/or regions that are going to | be haplotyped. |
 | `-outputFolderBase` | Index, hap, collect, modVCF | CF | The result of haplotyping will be collected in the following folder.|
 | `-processorIndex` | hap | C | It is possible to run Ranbow on different cores in one machine and also in different machines. All scaffolds are distributed to different sets according to their sizes. This assignment is done to minimize the maximum running time of all individual processors. Each set is assigned to one processor. `-processorIndex` is an index referring to one processor and should be in the following range: [0, `-noProcessor`) |
+| `-WinLen` | not compulsory, usage in hap mode | C | sliding window length, Default:8, suggested for Illumina: Default, suggested for long and linked read: 5 to speed up the process of haplotyping  |
 
 *C: command line, F: parameter file
 
@@ -85,7 +86,7 @@ Here is the content of parameter file used in this toy example:
 
 For simplicity, data files are stored in one folder (named RANBOW/toy) and the all parameters are adjusted in hap.params file. The parameter file is passed to through the `-par` argument.
 ```
-python2_7_13  ranbow.py hap -par RANBOW/toy/hap.params
+python2.7  ranbow.py hap -par RANBOW/toy/hap.params
 ```
 So here is the list of files in the folder:
 ```
@@ -106,7 +107,7 @@ total 30M
 It generates index files for bam, vcf, and fasta if not exist:
 
 ```
-python2_7_13  ranbow.py hap -mode index -par RANBOW/toy/hap.params
+python2.7  ranbow.py hap -mode index -par RANBOW/toy/hap.params
 ```
 
 Then the index files are generated and listed as follows:
@@ -189,7 +190,7 @@ To run the code in parallel on one machine the following command can be executed
 ```
 for i in {0..3}
 do
-python2_7_13 ranbow.py hap -mode hap -par hap.params -processorIndex $i > $i.log &
+python2.7 ranbow.py hap -mode hap -par hap.params -processorIndex $i > $i.log &
 done
 ```
 
@@ -201,7 +202,7 @@ Machine A:
 ```
 for i in {0..1}
 do
-python2_7_13 ranbow.py hap -mode hap -par hap.params -processorIndex $i > $i.log &
+python2.7 ranbow.py hap -mode hap -par hap.params -processorIndex $i > $i.log &
 done
 ```
 
@@ -209,7 +210,7 @@ Machine B:
 ```
 for i in {2..2}
 do
-python2_7_13 ranbow.py hap -mode hap -par hap.params -processorIndex $i > $i.log &
+python2.7 ranbow.py hap -mode hap -par hap.params -processorIndex $i > $i.log &
 done
 ```
 
@@ -223,13 +224,18 @@ drwxr-x--- 2 moeinzad moeinzad 4.0K Mar 31 11:03 1
 drwxr-x--- 2 moeinzad moeinzad 4.0K Mar 31 11:03 2
 ```
 
+#### Suggested command for different technologies
+##### Illumina
+The suggested parameters in the previous section and the default paramters are adjusted for Illumina
+##### Long read technologies like Pacbio CCS, Pacbio CLR, or Nanopore
+We suggest to use the same command suggested in previous section plus 5 for -WinLen to speed up the process 
 
 
 ### Collecting generated data from different processors (mode: collect)
 When all jobs get finished, `-mode collect` can be executed to collect the haplotypes from different machines:
 
 ```
-python2_7_13 ranbow.py hap -mode collect -par hap.params
+python2.7 ranbow.py hap -mode collect -par hap.params
 number of folders: 3
 [samopen] SAM header is present: 28 sequences.
 [samopen] SAM header is present: 28 sequences.
@@ -280,17 +286,17 @@ The detailed information of the modification can be found in:
 To evaluate the haplotyping accuracy, we recruit the Roche 454 trimmed reads mapped to the assembly. This file or other gold standard mapped read files has to be passed with `-bamFileEval` parameter. The Ranbow eval has also this option of being executed in different machine in parallel. For obtaining the evaluation result the following steps needs to be done.
 
 ```
-python2_7_13 ranbow.py eval -par hap.params -mode index
+python2.7 ranbow.py eval -par hap.params -mode index
 ```
 
 mode run in parallel :
 ```
-python2_7_13 ranbow.py eval -par hap.params -mode run -processorIndex i
+python2.7 ranbow.py eval -par hap.params -mode run -processorIndex i
 ```
 
 mode collect:
 ```
-python2_7_13 ranbow.py eval -par hap.params -mode collect
+python2.7 ranbow.py eval -par hap.params -mode collect
 ```
 the parameters are:
 
@@ -342,16 +348,16 @@ illumina
 To infer the evolutionary event of the organism with the aid of haplotypes, Ranbow phylo can be employed to extract and tune the alignments from all phased regions and report the topology of the evolutionary phylogenetic tree.
 The Ranbow phylo can be executed in parallel mode as well. Therefore the files need to be indexed first.
 ```
-python2_7_13 ranbow.py phylo -par hap.params -mode index
+python2.7 ranbow.py phylo -par hap.params -mode index
 ```
 mode run in parallel :
 ```
-python2_7_13 ranbow.py phylo -par hap.params -mode run -processorIndex i
+python2.7 ranbow.py phylo -par hap.params -mode run -processorIndex i
 ```
 
 mode collect:
 ```
-python2_7_13 ranbow.py phylo -par hap.params -mode collect
+python2.7 ranbow.py phylo -par hap.params -mode collect
 ```
 
 then then collect mode is developed in order to report the final statistics for different phylogenetic tree topologies.
