@@ -230,8 +230,9 @@ The suggested parameters in the previous section and the default paramters are a
 ### (Pacbio, Nanopore) Long read technologies like Pacbio CCS, Pacbio CLR, or Nanopore
 We suggest to use the same command suggested in previous section plus 5 for -WinLen to speed up the process 
 
-
-
+```
+python ranbow.py hap -mode hap  -par params.text -WinLen 5
+```
 ### Collecting generated data from different processors (mode: collect)
 When all jobs get finished, `-mode collect` can be executed to collect the haplotypes from different machines:
 
